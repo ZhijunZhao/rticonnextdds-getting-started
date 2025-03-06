@@ -44,6 +44,7 @@ unsigned int process_data(HelloWorldDataReader *hello_world_reader)
     // Iterate over all available data
     for (int i = 0; i < data_seq.length(); ++i) {
         // Check if a sample is an instance lifecycle event
+        std::cout << "sample state " << info_seq[i].sample_state << " instance state " << info_seq[i].instance_state << std::endl;
         if (!info_seq[i].valid_data) {
             std::cout << "Received instance state notification" << std::endl;
             continue;

@@ -75,9 +75,12 @@ int run_example(unsigned int domain_id, unsigned int sample_count)
 
     // This DataWriter will write data on Topic "HelloWorld Topic"
     // DataWriter QoS is configured in USER_QOS_PROFILES.xml
+    auto default = DDS_DATAWRITER_QOS_DEFAULT;
+    default.publish_mode.kind = DDS_ASYNCHRONOUS_PUBLISH_MODE_QOS;
+    default.writer_data_lifecycle.autodispose_unregistered_instances = TRUE;
     DDSDataWriter *writer = publisher->create_datawriter(
             topic,
-            DDS_DATAWRITER_QOS_DEFAULT,
+            default,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
@@ -103,13 +106,16 @@ int run_example(unsigned int domain_id, unsigned int sample_count)
 
     // Main loop, write data
     // ---------------------
+    DDS_InstanceHandle_t handle;
     for (unsigned int count = 0;
-         !shutdown_requested && count < sample_count;
+         !shutdown_requested && count < 3;
          ++count) {
         // Modify the data to be written here
 
         std::cout << "Writing HelloWorld, count " << count << std::endl;
-        retcode = hello_world_writer->write(*sample, DDS_HANDLE_NIL);
+        sample->id = count;
+        handle = hello_world_writer->register_instance(*sample);
+        retcode = hello_world_writer->write(*sample, handle);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "write error " << retcode << std::endl;
         }
@@ -118,6 +124,8 @@ int run_example(unsigned int domain_id, unsigned int sample_count)
         DDS_Duration_t send_period = { 4, 0 };
         NDDSUtility::sleep(send_period);
     }
+
+    retcode = hello_world_writer->unregister_instance(*sample, handle);
 
     // Cleanup
     // -------
