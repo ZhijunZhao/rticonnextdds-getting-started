@@ -75,12 +75,12 @@ int run_example(unsigned int domain_id, unsigned int sample_count)
 
     // This DataWriter will write data on Topic "HelloWorld Topic"
     // DataWriter QoS is configured in USER_QOS_PROFILES.xml
-    auto default = DDS_DATAWRITER_QOS_DEFAULT;
-    default.publish_mode.kind = DDS_ASYNCHRONOUS_PUBLISH_MODE_QOS;
-    default.writer_data_lifecycle.autodispose_unregistered_instances = TRUE;
+    auto writerQos = DDS_DATAWRITER_QOS_DEFAULT;
+    writerQos.publish_mode.kind = DDS_ASYNCHRONOUS_PUBLISH_MODE_QOS;
+    writerQos.writer_data_lifecycle.autodispose_unregistered_instances = DDS_BOOLEAN_TRUE;
     DDSDataWriter *writer = publisher->create_datawriter(
             topic,
-            default,
+            writerQos,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
