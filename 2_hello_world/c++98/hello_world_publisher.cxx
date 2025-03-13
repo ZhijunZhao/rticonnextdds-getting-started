@@ -108,7 +108,7 @@ int run_example(unsigned int domain_id, unsigned int sample_count)
     // ---------------------
     DDS_InstanceHandle_t handle;
     for (unsigned int count = 0;
-         !shutdown_requested && count < 3;
+         !shutdown_requested && count < 10;
          ++count) {
         // Modify the data to be written here
 
@@ -125,7 +125,20 @@ int run_example(unsigned int domain_id, unsigned int sample_count)
         NDDSUtility::sleep(send_period);
     }
 
+    //retcode = hello_world_writer->dispose(*sample, handle);
+    
+    {
+      auto result = publisher->begin_coherent_changes();
+      if (result != DDS_RETCODE_OK)
+        std::cout << "begin_coherent_changes ERROR: " << result << std::endl;
+    }
     retcode = hello_world_writer->unregister_instance(*sample, handle);
+    {
+      auto result = publisher->end_coherent_changes();
+      if (result != DDS_RETCODE_OK)
+        std::cout << "begin_coherent_changes ERROR: " << result << std::endl;
+    }
+    NDDSUtility::sleep({ 4, 0 });
 
     // Cleanup
     // -------

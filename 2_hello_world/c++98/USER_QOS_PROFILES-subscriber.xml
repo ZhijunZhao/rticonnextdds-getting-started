@@ -60,7 +60,12 @@
                     <name>HelloWorldDataReader</name>
                 </subscription_name>
             </datareader_qos>
-
+            <subscriber_qos>
+                <presentation>
+                    <access_scope>TOPIC_PRESENTATION_QOS</access_scope>
+                    <coherent_access>true</coherent_access>
+                </presentation>
+            </subscriber_qos>
             <!-- QoS specified to override the QoS in the base profile. 
                  Configures the DomainParticipant in the example code. -->
             <domain_participant_qos>
